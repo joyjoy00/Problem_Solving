@@ -1,2 +1,2 @@
-# Algorithm_Records
+# Problem_Solving
 My problem solving records
