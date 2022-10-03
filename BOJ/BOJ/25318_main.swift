@@ -9,10 +9,15 @@
 import Foundation
 
 var opi_num: Int = 0
-var T: [String] = []
-var L: [Int] = []
-var dp_p: [Double] = []
-var dp_pl: [Double] = []
+
+var y: [Double] = [0]
+var M: [Double] = [0]
+var d: [Double] = [0]
+var h: [Double] = [0]
+var m: [Double] = [0]
+var s: [Double] = [0]
+
+var L: [Int] = [0]
 var sum_p: Double = 0
 var sum_pl: Double = 0
 var res: Double = 0
@@ -31,11 +36,7 @@ func main_(){
 
 // input값 입력받기
 func get_input(){
-    
-    var startIdx: String.Index
-    var midIdx: String.Index
-    var midIdx2: String.Index
-    
+
     guard let tmp_input = readLine() else{
         return
     }
@@ -47,24 +48,21 @@ func get_input(){
     }
     
     for _ in 1...opi_num{
-        if let tmp_input = readLine(){
-            //print(tmp_input)
-            startIdx = tmp_input.index(tmp_input.startIndex, offsetBy: 0)
-            midIdx = tmp_input.index(tmp_input.startIndex, offsetBy: 18)
-            midIdx2 = tmp_input.index(tmp_input.startIndex, offsetBy: 20)
-            
-            let range = midIdx2...
-            T.append(String(tmp_input[startIdx ... midIdx]))
-            L.append(Int(tmp_input[range])!)
-        }
-    }
-}
+        let tmp_input = readLine()!.split(separator: " ")
 
-func substring(s: Int, t: Int, A: String)->String{
-    let sIdx = A.index(A.startIndex, offsetBy: 0)
-    let tIdx = A.index(A.startIndex, offsetBy: t)
-    return String(A[sIdx...tIdx])
-    
+        var tmp = tmp_input[0].split(separator: "/").map{Double(String($0))}
+        y.append(tmp[0]!)
+        M.append(tmp[1]!)
+        d.append(tmp[2]!)
+        
+        tmp = tmp_input[1].split(separator: ":").map{Double(String($0))}
+        h.append(tmp[0]!)
+        m.append(tmp[1]!)
+        s.append(tmp[2]!)
+        
+        L.append(Int(tmp_input[2])!)
+        
+    }
 }
 
 // 두 시간간의 차 구하기
@@ -73,37 +71,102 @@ func sub_t(i: Int ,N : Int)->Double{
     if N == 1 {
         return 0
     }else{
+        let s1 = s[N]
+        let s2 = s[i]
+        let m1 = m[N]
+        let m2 = m[i]
+        let h1 = h[N]
+        let h2 = h[i]
+        let d1 = d[N]
+        let d2 = d[i]
+        let M1 = M[N]
+        let M2 = M[i]
+        let y1 = y[N]
+        let y2 = y[i]
         
-        if let prev = toDateFormat(st: T[i]){
-            if let cur = toDateFormat(st: T[N]){
-                
-//                    let prev_cal = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: prev)
-//                    let cur_cal = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: cur)
-//////
-//                    let del_y = Calendar.current.dateComponents([.year], from: prev, to: cur).year!
-//                    let del_M = Calendar.current.dateComponents([.month], from: prev, to: cur).month!
-                let delt = cur.timeIntervalSince(prev)
-                //print("prev_cal:\(prev_cal), cur_cal:\(cur_cal), del:\(delt/(60*60*24)), del_y:\(del_y), del_M:\(del_M)")
-                
-                return delt
-    
-            }else{
-                return 0
+        var d1_1 = ((((s1/60)+m1)/60)+h1/24)+d1
+        var total_1 = y1
+        
+        
+        var d2_1 = ((((s2/60)+m2)/60)+h2/24)+d2
+        var total_2 = y2
+       
+        if y1 == 2020 {
+            for i in 1..<Int(M1){
+                if i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12 {
+                    d1_1 += 31
+                }else if i == 2 {
+                    d1_1 += 29
+                }else{
+                    d1_1 += 30
+                }
             }
+            
+            total_1 = (y1-1)*365 + d1_1
+            
         }else{
-            return 0
+            for i in 1..<Int(M1){
+                
+                if i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12 {
+                    d1_1 += 31
+                }else if i == 2 {
+                    
+                    d1_1 += 28
+                }else{
+                    d1_1 += 30
+                }
+            }
+            if y1-1 >= 2020 {
+                total_1 = (y1-2) * 365 + d1_1 + 366
+            }
+            total_1 = (y1-1)*365 + d1_1
         }
+        
+        
+        if y2 == 2020 {
+            for i in 1..<Int(M2){
+                if i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12 {
+                    d2_1 += 31
+                }else if i == 2 {
+                    d2_1 += 29
+                }else{
+                    d2_1 += 30
+                }
+            }
+            
+            total_2 = y2*365 + d2_1
+            
+        }else{
+            for i in 1..<Int(M2){
+                if i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12 {
+                    print("? \(i)")
+
+                    d2_1 += 31
+                }else if i == 2 {
+                    print("h? \(i)")
+                    d2_1 += 28
+                }else{
+                    d2_1 += 30
+                }
+            }
+            if y2-1 >= 2020 {
+                total_2 = (y2-2)*365 + d2_1 + 366
+            }
+            total_2 = (y2-1)*365 + d2_1
+        }
+        
+        
+        //print("d: \(d1_1), \(d2_1)")
+        let sub = (total_1 - total_2)/365
+        print("\(total_1 - total_2) , \(sub)")
+        return Double(sub)
     }
 }
 
 //p_i 구하기
 func set_dp(){
     for k in 1...opi_num{
-        let p = max(pow(0.5, (sub_t(i:k, N: opi_num)/365)), pow(0.9, Double(opi_num)))
-        
-        //print("sub_t: \(sub_t(i:k, N: opi_num)), P: \(p)")
-        dp_p.append(p)
-        dp_p.append(p*Double(L[k]))
+        let p = max(pow(0.5, (sub_t(i:k, N: opi_num))), pow(0.9, Double(opi_num)))
         sum_p += p
         sum_pl += p*Double(L[k])
     }
@@ -113,22 +176,6 @@ func get_result()->Double{
     return round(sum_pl/sum_p)
 }
 
-func toDateFormat(st: String)->Date!{
-    let format = DateFormatter()
-    format.dateFormat = "yyyy-MM-dd HH:mm:ss"
-    if let date = format.date(from: st){
-        return date
-    }else{
-        return nil
-    }
-}
-
-// set the array of index 0
-T.append("")
-L.append(0)
-dp_p.append(0)
-dp_pl.append(0)
 main_()
 
 */
-
